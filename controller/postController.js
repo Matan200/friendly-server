@@ -1,26 +1,58 @@
 const Post = require("../models/postModel");
+const User = require("../models/userModel");
 
+// שליפת כל הפוסטים
 const getAllPosts = async (req, res) => {
   try {
-    const posts = await Post.find();
+    const posts = await Post.find()
+      .populate("editor", "userName email")
+      .populate("comments.user", "userName email") // שליפת פרטי המשתמש שיצר את הפוסט
+      .sort({ createdAt: -1 });
     res.status(200).json(posts);
   } catch (error) {
-    res.status(500).json({ message: "error fetching posts!" });
+    res.status(500).json({ message: "Error fetching posts!" });
   }
 };
 
+// יצירת פוסט חדש
 const createPost = async (req, res) => {
   try {
+    const { editor, subject, postContent } = req.body;
+    const user = await User.findOne({ email: editor });
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    // יצירת הפוסט החדש
     const newPost = new Post({
-      subject: req.body.subject,
-      postContent: req.body.postContent,
+      editor: user._id,
+      subject,
+      postContent,
     });
+    //return res.status(200).json(newPost.editor);
+    // שמירת הפוסט למסד הנתונים
     const saveNewPost = await newPost.save();
-    res.status(200).json(saveNewPost);
+    if (saveNewPost) {
+      //return res.status(200).json(newPost.editor);
+      user.posts.push(saveNewPost._id); // הוספת הפוסט לרשימת הפוסטים של המשתמש
+      await user.save();
+      // if (ressss) {
+      //   return res.status(200).json("its ok!");
+      // } else {
+      //   return res.status(200).json("its in the else ");
+      // }
+    }
+    // await User.findByIdAndUpdate(user._id, {
+    //   $push: { posts: saveNewPost._id },
+
+    return res.status(200).json(saveNewPost);
   } catch (error) {
-    res.status(500).json({ message: "fail to create a post!" });
+    console.error("Error creating post:", error);
+    res.status(500).json({ message: "Failed to create a post!" });
   }
 };
+
+// עדכון מספר לייקים
 const updateLikes = async (postId) => {
   try {
     const updatePost = await Post.findByIdAndUpdate(
@@ -28,30 +60,78 @@ const updateLikes = async (postId) => {
       { $inc: { likes: 1 } },
       { new: true }
     );
-    console.log("Updated post:", updatePost);
     return updatePost;
   } catch (error) {
     console.error("Error updating likes:", error);
     throw error;
   }
 };
+const commentsPost = async (req, res) => {
+  const postId = req.params.id;
+  const { text, email } = req.body;
+  //return res.status(200).json(email);
+  try {
+    const post = await Post.findById(postId);
+    const commentUser = await User.findOne({ email }).select(
+      "userName _id email"
+    );
+    if (!post) {
+      return res.status(200).json("commentUser.email");
+    } else if (!commentUser) {
+      return res.status(200).json("text");
+    }
 
+    const newComment = {
+      text: text,
+      user: commentUser._id,
+    };
+    post.comments.push(newComment);
+    await post.save();
+    const updatedPost = await Post.findById(postId)
+      .populate("editor", "userName email")
+      .populate("comments.user", "userName");
+    res.status(200).json(updatedPost);
+  } catch (error) {
+    console.error("Error adding comment:", error);
+    res.status(500).json({ message: "Error adding comment" });
+  }
+};
+// הוספת לייק לפוסט
 const likePost = async (req, res) => {
   const postId = req.params.id;
   try {
-    const updatedPost = await updateLikes(postId);
+    const updatedPost = await Post.findByIdAndUpdate(
+      postId,
+      { $inc: { likes: 1 } },
+      { new: true }
+    )
+      .populate("editor", "userName email") // שליפת פרטי היוצר
+      .populate("comments.user", "userName email"); // שליפת פרטי המגיבים
     res.status(200).json(updatedPost);
   } catch (error) {
-    res.status(500).json({ message: "error liking the post" });
+    console.error("Error liking post:", error);
+    res.status(500).json({ message: "Error liking the post" });
   }
 };
+
+// שליפת לייקים לפוסט
 const getLikeOnPost = async (req, res) => {
   const postId = req.params.id;
   try {
-    const LikeOnPost = await Post.findById(postId.likes);
-    res.status(200).json(LikeOnPost);
+    const post = await Post.findById(postId);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+    res.status(200).json({ likes: post.likes });
   } catch (error) {
-    res.status(500).json({ message: "error get the likes" });
+    res.status(500).json({ message: "Error getting the likes" });
   }
 };
-module.exports = { getAllPosts, createPost, likePost, getLikeOnPost };
+
+module.exports = {
+  getAllPosts,
+  createPost,
+  likePost,
+  getLikeOnPost,
+  commentsPost,
+};

@@ -1,4 +1,14 @@
 const express = require("express");
+const {
+  checkEmailExists,
+  createUser,
+  loginCheck,
+  getUserByEmail,
+} = require("../controller/usersController");
 const router = express.Router();
 
-router.post("/signup");
+router.post("/signup", createUser);
+router.post("/check-email", checkEmailExists);
+router.post("/login", loginCheck);
+router.get("/users/findByEmail/:email", getUserByEmail);
+module.exports = router;

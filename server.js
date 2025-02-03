@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const postRoutes = require("./routes/postRoutes"); // מוודא שיש לך את הנתיב הנכון
-
+const userRoutes = require("./routes/usersRoutes");
 const app = express();
 
 // הגדרת CORS לפני הנתיבים
@@ -16,7 +16,7 @@ app.use(
 
 app.use(express.json()); // מבטיח שהשרת יכול לקבל JSON
 app.use("/api", postRoutes); // כל הנתיבים של הפוסטים יהיו תחת /api
-
+app.use("/api/users", userRoutes);
 // חיבור ל-MongoDB Atlas
 mongoose
   .connect(

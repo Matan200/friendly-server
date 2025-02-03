@@ -6,12 +6,11 @@ const { post } = require("../routes/postRoutes");
 const userSchema = new mongoose.Schema({
   userName: {
     type: String,
-    require: true,
-    unique: true,
+    required: true,
   },
   password: {
     type: String,
-    require: true,
+    required: true,
   },
   email: {
     type: String,
@@ -20,13 +19,17 @@ const userSchema = new mongoose.Schema({
   },
   birthdate: {
     type: Date,
-    require: true,
+    required: true,
   },
   userType: {
     type: String,
   },
   picture: {
     type: String, // שדה לתמונה (נתיב התמונה שהועלתה)
+  },
+  school: {
+    type: String,
+    //require: true,
   },
   posts: [
     {
