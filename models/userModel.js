@@ -37,6 +37,19 @@ const userSchema = new mongoose.Schema({
       ref: "Post",
     },
   ],
+  gender: {
+    type: String,
+    enum: ["male", "female", "other"],
+    required: true,
+  },
+  idnumber: {
+    type: String,
+    required: true,
+  },
+  address: {
+    type: String,
+    required: true,
+  },
 });
 const User = mongoose.model("User", userSchema);
 module.exports = User;

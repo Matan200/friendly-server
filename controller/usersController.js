@@ -78,7 +78,16 @@ const createUser = async (req, res) => {
       console.log(req.body);
 
       // חישוב גיל המשתמש
-      const { userName, password, email, birthdate, school = null } = req.body;
+      const {
+        userName,
+        password,
+        email,
+        birthdate,
+        idnumber,
+        address,
+        gender,
+        school = null,
+      } = req.body;
       const hashedPassword = await bcrypt.hash(password, 10);
       const emailExists = await User.findOne({ email });
       if (emailExists) {
@@ -95,6 +104,9 @@ const createUser = async (req, res) => {
         password: hashedPassword,
         email,
         birthdate,
+        idnumber,
+        address,
+        gender,
         picture: req.file ? req.file.path : null, // שמירת נתיב התמונה אם קובץ הועלה
         school,
       });
