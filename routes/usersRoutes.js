@@ -10,5 +10,5 @@ const router = express.Router();
 router.post("/signup", createUser);
 router.post("/check-email", checkEmailExists);
 router.post("/login", loginCheck);
-router.get("/users/findByEmail/:email", getUserByEmail);
+router.get("/findByEmail/:email", getUserByEmail);
 module.exports = router;

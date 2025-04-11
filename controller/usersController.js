@@ -76,7 +76,7 @@ const createUser = async (req, res) => {
 
     try {
       console.log(req.body);
-
+      
       // חישוב גיל המשתמש
       const {
         userName,
@@ -131,22 +131,42 @@ const createUser = async (req, res) => {
     }
   });
 };
+// const getUserByEmail = async (req, res) => {
+//   const email = req.params;
+//   //return res.status(200).json(email);
+
+//   // if (email) {
+//   //   return res.status(200).json({ message: "email found" });
+//   // }
+
+//   try {
+//     const user = await User.findOne({ email }).select("_id"); // מחפש את המשתמש לפי המייל ומחזיר רק את ה-ID
+//     if (!user) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
+
+//     res.status(200).json(user); // מחזיר את ה-ID של המשתמש
+//   } catch (error) {
+//     console.error("Error finding user by email:", error);
+//     res.status(500).json({ message: "Error finding user by email" });
+//   }
+// };
+
+
 const getUserByEmail = async (req, res) => {
-  const email = req.params;
-  if (email) {
-    return res.status(200).json({ message: "email  found" });
-  }
+  const email = req.params.email; // שולף את המייל מתוך האובייקט
 
   try {
-    const user = await User.findOne({ email }).select("_id"); // מחפש את המשתמש לפי המייל ומחזיר רק את ה-ID
+    const user = await User.findOne({ email }); // מחפש לפי מייל
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    res.status(200).json(user); // מחזיר את ה-ID של המשתמש
+    res.status(200).json(user); // מחזיר את כל המשתמש
   } catch (error) {
     console.error("Error finding user by email:", error);
     res.status(500).json({ message: "Error finding user by email" });
   }
 };
+
 module.exports = { checkEmailExists, createUser, loginCheck, getUserByEmail };

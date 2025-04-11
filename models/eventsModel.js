@@ -40,6 +40,13 @@ const eventsSchema = new mongoose.Schema({
     type: String,
     require: true,
   },
+  price:{
+    type: Number,
+  },
+  imageUrl: {    
+    type: String,
+
+  },
 });
 
 const Event = mongoose.model("Event", eventsSchema);

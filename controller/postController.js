@@ -75,11 +75,12 @@ const commentsPost = async (req, res) => {
     const commentUser = await User.findOne({ email }).select(
       "userName _id email"
     );
-    if (!post) {
-      return res.status(200).json("commentUser.email");
-    } else if (!commentUser) {
-      return res.status(200).json("text");
-    }
+    //בדיקההההההההההההההההההה
+    // if (!post) {
+    //   return res.status(200).json("commentUser.email");
+    // } else if (!commentUser) {
+    //   return res.status(200).json("text");
+    // }
 
     const newComment = {
       text: text,
@@ -128,10 +129,74 @@ const getLikeOnPost = async (req, res) => {
   }
 };
 
+
+const getFilteredPosts = async (req, res) => {
+  try {
+    const { city, school, minAge, maxAge, subject,gender } = req.query;
+
+    let posts = await Post.find({})
+      .populate("editor")
+      .sort({ createdAt: -1 });
+
+    if (city) {
+      posts = posts.filter(
+        (post) =>
+          post.editor?.address &&
+          post.editor.address.toLowerCase().includes(city.toLowerCase())
+      );
+    }
+
+    if (school) {
+      posts = posts.filter(
+        (post) =>
+          post.editor?.school &&
+          post.editor.school.toLowerCase().includes(school.toLowerCase())
+      );
+    }
+
+    if (minAge && maxAge) {
+      const today = new Date();
+      posts = posts.filter((post) => {
+        const birthDate = post.editor?.birthdate;
+        if (!birthDate) return false;
+
+        const ageDifMs = today - new Date(birthDate);
+        const ageDate = new Date(ageDifMs);
+        const age = Math.abs(ageDate.getUTCFullYear() - 1970);
+
+        return age >= minAge && age <= maxAge;
+      });
+    }
+
+    if (subject) {
+      posts = posts.filter(
+        (post) =>
+          post.subject &&
+          post.subject.toLowerCase().includes(subject.toLowerCase())
+      );
+    }
+    if (gender && gender.trim() !== "") {
+      posts = posts.filter(
+        (post) =>
+          post.editor?.gender &&
+          post.editor.gender.toLowerCase() === gender.toLowerCase()
+      );
+    }
+    
+
+    res.status(200).json(posts);
+  } catch (error) {
+    console.error("Error filtering posts:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
 module.exports = {
   getAllPosts,
   createPost,
   likePost,
   getLikeOnPost,
   commentsPost,
+  getFilteredPosts
 };
