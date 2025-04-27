@@ -17,6 +17,7 @@ const {
   getAllEvents,
   participationToEvent,
   removeParticipantFromEvent,
+  getFilteredEvents,
 } = require("../controller/eventsController");
 
 router.get("/", getAllEvents);

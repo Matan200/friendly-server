@@ -85,5 +85,5 @@ const getFilteredEvents = async (req, res) => {
 module.exports = {
   getAllEvents,
   participationToEvent,
-  removeParticipantFromEvent,
+  removeParticipantFromEvent,getFilteredEvents
 };
