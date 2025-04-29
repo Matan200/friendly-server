@@ -87,6 +87,7 @@ const createUser = async (req, res) => {
         address,
         gender,
         school = null,
+        picture,
       } = req.body;
       const hashedPassword = await bcrypt.hash(password, 10);
       const emailExists = await User.findOne({ email });
@@ -107,8 +108,10 @@ const createUser = async (req, res) => {
         idnumber,
         address,
         gender,
-        picture: req.file ? req.file.path : null, // שמירת נתיב התמונה אם קובץ הועלה
+        //picture: req.file ? req.file.path : null, // שמירת נתיב התמונה אם קובץ הועלה
         school,
+        picture: req.file ? req.file.path : picture || null, // ✅ תיקון כאן: שמירה גם אם מגיע picture מ- body
+
       });
 
       // הגדרת סוג המשתמש
