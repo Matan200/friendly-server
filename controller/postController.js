@@ -1,6 +1,39 @@
 const Post = require("../models/postModel");
 const User = require("../models/userModel");
 
+const getPostsForAdults = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const userType = user.userType;
+
+    // שליפת הפוסטים עם הצטרפות למידע על המשתמשים
+    const posts = await Post.find().populate("createdBy", "userType");
+
+    // סינון: אם המשתמש הוא adult, לא להחזיר פוסטים של students
+    const filteredPosts = posts.filter(post => {
+      if (userType === "adult" && post.createdBy.userType === "student") {
+        return false;
+      }
+      return true;
+    });
+
+    res.status(200).json(filteredPosts);
+  } catch (error) {
+    console.error("Error getting posts:", error);
+    res.status(500).json({ message: "Error getting posts", error });
+  }
+};
+
+
+
+
 // שליפת כל הפוסטים
 const getAllPosts = async (req, res) => {
   try {
