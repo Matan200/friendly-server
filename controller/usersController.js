@@ -3,7 +3,8 @@ const multer = require("multer");
 const express = require("express");
 const path = require("path");
 const app = express();
-const bcrypt = require("bcrypt");
+//const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 
 express.json();
 // הגדרת הגדרת העלאת קבצים עם multer
