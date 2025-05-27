@@ -50,7 +50,7 @@ const getAllPosts = async (req, res) => {
 // יצירת פוסט חדש
 const createPost = async (req, res) => {
   try {
-    const { editor, subject, postContent } = req.body;
+    const { editor, /*subject*/ postContent } = req.body;
     const user = await User.findOne({ email: editor });
     if (!user) {
       return res.status(400).json({ message: "User not found" });
@@ -59,7 +59,7 @@ const createPost = async (req, res) => {
     // יצירת הפוסט החדש
     const newPost = new Post({
       editor: user._id,
-      subject,
+      //subject,
       postContent,
     });
     //return res.status(200).json(newPost.editor);
@@ -165,7 +165,7 @@ const getLikeOnPost = async (req, res) => {
 
 const getFilteredPosts = async (req, res) => {
   try {
-    const { city, school, minAge, maxAge, subject,gender } = req.query;
+    const { city, school, minAge, maxAge, /*subject,*/gender } = req.query;
 
     let posts = await Post.find({})
       .populate("editor")
@@ -201,13 +201,13 @@ const getFilteredPosts = async (req, res) => {
       });
     }
 
-    if (subject) {
-      posts = posts.filter(
-        (post) =>
-          post.subject &&
-          post.subject.toLowerCase().includes(subject.toLowerCase())
-      );
-    }
+    // if (subject) {
+    //   posts = posts.filter(
+    //     (post) =>
+    //       post.subject &&
+    //       post.subject.toLowerCase().includes(subject.toLowerCase())
+    //   );
+    // }
     if (gender && gender.trim() !== "") {
       posts = posts.filter(
         (post) =>

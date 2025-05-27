@@ -4,7 +4,7 @@ const User = require("./userModel");
 const postSchema = new mongoose.Schema({
   subject: {
     type: String,
-    required: true,
+    //required: true,
   },
   postContent: {
     type: String,
