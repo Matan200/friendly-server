@@ -56,7 +56,7 @@ const loginCheck = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Login successful server",
-      user: { email: user.email, userName: user.userName },
+      user: { email: user.email, userName: user.userName, age: user.age },
     });
   } catch (error) {
     console.error("Error during login server:", error);
@@ -77,7 +77,7 @@ const createUser = async (req, res) => {
 
     try {
       console.log(req.body);
-      
+
       // חישוב גיל המשתמש
       const {
         userName,
@@ -112,7 +112,6 @@ const createUser = async (req, res) => {
         //picture: req.file ? req.file.path : null, // שמירת נתיב התמונה אם קובץ הועלה
         school,
         picture: req.file ? req.file.path : picture || null, // ✅ תיקון כאן: שמירה גם אם מגיע picture מ- body
-
       });
 
       // הגדרת סוג המשתמש
@@ -155,7 +154,6 @@ const createUser = async (req, res) => {
 //     res.status(500).json({ message: "Error finding user by email" });
 //   }
 // };
-
 
 const getUserByEmail = async (req, res) => {
   const email = req.params.email; // שולף את המייל מתוך האובייקט
