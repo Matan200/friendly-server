@@ -185,10 +185,17 @@ const getLikeOnPost = async (req, res) => {
 
 const getFilteredPosts = async (req, res) => {
   try {
-    const { city, school, minAge, maxAge, /*subject,*/ gender } = req.query;
+    const { city, school, minAge, maxAge, /*subject,*/ gender, email } =
+      req.query;
 
     let posts = await Post.find({}).populate("editor").sort({ createdAt: -1 });
-
+    if (userType) {
+      posts = posts.filter(
+        (post) =>
+          post.editor?.userType &&
+          post.editor.userType.toLowerCase() === userType.toLowerCase()
+      );
+    }
     if (city) {
       posts = posts.filter(
         (post) =>
