@@ -9,9 +9,8 @@ const {
   getFilteredPosts,
 } = require("../controller/postController");
 
-// router.get("/posts", getAllPosts);
+// router.get("/posts/byUserType", getAllPosts);
 router.post("/posts/byUserType", getAllPosts);
-
 router.post("/posts", createPost);
 router.put("/posts/:id/like", likePost);
 router.get("/post/:id/like", getLikeOnPost);
