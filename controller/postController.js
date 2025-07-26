@@ -190,6 +190,7 @@ const getFilteredPosts = async (req, res) => {
 
     let posts = await Post.find({}).populate("editor").sort({ createdAt: -1 });
     if (userType) {
+      res.status(200).json(userType);
       posts = posts.filter(
         (post) =>
           post.editor?.userType &&
