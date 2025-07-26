@@ -185,7 +185,7 @@ const getLikeOnPost = async (req, res) => {
 
 const getFilteredPosts = async (req, res) => {
   try {
-    const { city, school, minAge, maxAge, /*subject,*/ gender, email } =
+    const { city, school, minAge, maxAge, /*subject,*/ gender, userType } =
       req.query;
 
     let posts = await Post.find({}).populate("editor").sort({ createdAt: -1 });
