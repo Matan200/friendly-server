@@ -17,7 +17,7 @@ const getPostsForAdults = async (req, res) => {
     const posts = await Post.find().populate("createdBy", "userType");
 
     // סינון: אם המשתמש הוא adult, לא להחזיר פוסטים של students
-    const filteredPosts = posts.filter(post => {
+    const filteredPosts = posts.filter((post) => {
       if (userType === "adult" && post.createdBy.userType === "student") {
         return false;
       }
@@ -31,19 +31,40 @@ const getPostsForAdults = async (req, res) => {
   }
 };
 
-
-
-
 // שליפת כל הפוסטים
+// const getAllPosts = async (req, res) => {
+//   try {
+//     const posts = await Post.find()
+//       .populate("editor", "userName email")
+//       .populate("comments.user", "userName email") // שליפת פרטי המשתמש שיצר את הפוסט
+//       .sort({ createdAt: -1 });
+//     res.status(200).json(posts);
+//   } catch (error) {
+//     res.status(500).json({ message: "Error fetching posts!" });
+//   }
+// };
+
 const getAllPosts = async (req, res) => {
+  const { email } = req.body;
+
   try {
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const userType = user.userType;
+
     const posts = await Post.find()
-      .populate("editor", "userName email")
-      .populate("comments.user", "userName email") // שליפת פרטי המשתמש שיצר את הפוסט
-      .sort({ createdAt: -1 });
-    res.status(200).json(posts);
+      .populate("editor", "userName email userType")
+      .populate("comments.user", "userName email");
+
+    const filteredPosts = posts.filter((post) => {
+      return post.editor?.userType === userType;
+    });
+
+    res.status(200).json(filteredPosts);
   } catch (error) {
-    res.status(500).json({ message: "Error fetching posts!" });
+    console.error("Error filtering posts by user type:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
@@ -162,14 +183,11 @@ const getLikeOnPost = async (req, res) => {
   }
 };
 
-
 const getFilteredPosts = async (req, res) => {
   try {
-    const { city, school, minAge, maxAge, /*subject,*/gender } = req.query;
+    const { city, school, minAge, maxAge, /*subject,*/ gender } = req.query;
 
-    let posts = await Post.find({})
-      .populate("editor")
-      .sort({ createdAt: -1 });
+    let posts = await Post.find({}).populate("editor").sort({ createdAt: -1 });
 
     if (city) {
       posts = posts.filter(
@@ -215,7 +233,6 @@ const getFilteredPosts = async (req, res) => {
           post.editor.gender.toLowerCase() === gender.toLowerCase()
       );
     }
-    
 
     res.status(200).json(posts);
   } catch (error) {
@@ -224,12 +241,11 @@ const getFilteredPosts = async (req, res) => {
   }
 };
 
-
 module.exports = {
   getAllPosts,
   createPost,
   likePost,
   getLikeOnPost,
   commentsPost,
-  getFilteredPosts
+  getFilteredPosts,
 };
