@@ -56,7 +56,11 @@ const loginCheck = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Login successful server",
-      user: { email: user.email, userName: user.userName, age: user.age },
+      user: {
+        email: user.email,
+        userName: user.userName,
+        userType: user.userType,
+      },
     });
   } catch (error) {
     console.error("Error during login server:", error);
