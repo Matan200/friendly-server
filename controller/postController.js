@@ -185,14 +185,11 @@ const getLikeOnPost = async (req, res) => {
 
 const getFilteredPosts = async (req, res) => {
   try {
-    const { city, school, minAge, maxAge, /*subject,*/ gender, userType} =
+    const { city, school, minAge, maxAge, /*subject,*/ gender} =
       req.query;
     // console.log("User type received:in try", userType);
     let posts = await Post.find({}).populate("editor").sort({ createdAt: -1 });
-    console.log("User type received:in try", userType);
-    if(!userType){
-       console.log("User type is not exist");
-    }
+    console.log("User type received:in try");
     // console.log("User type received:after popu", userType);
     // if (userType) {
     //       console.log("User type received: inside if", userType);
