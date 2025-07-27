@@ -46,6 +46,7 @@ const getPostsForAdults = async (req, res) => {
 
 const getAllPosts = async (req, res) => {
   const { email } = req.body;
+  console.log("get all post");
 
   try {
     const user = await User.findOne({ email });
@@ -184,10 +185,9 @@ const getLikeOnPost = async (req, res) => {
 };
 
 const getFilteredPosts = async (req, res) => {
-    console.log("FILTER FUNCTION REACHED");
+  console.log("FILTER FUNCTION REACHED");
   try {
-    const { city, school, minAge, maxAge, /*subject,*/ gender} =
-      req.query;
+    const { city, school, minAge, maxAge, /*subject,*/ gender } = req.query;
     // console.log("User type received:in try", userType);
     let posts = await Post.find({}).populate("editor").sort({ createdAt: -1 });
     console.log("User type received:in try");
@@ -201,7 +201,7 @@ const getFilteredPosts = async (req, res) => {
     //   );
     // }
     if (city) {
-          console.log("User type received:insidt city", city);
+      console.log("User type received:insidt city", city);
       posts = posts.filter(
         (post) =>
           post.editor?.address &&
