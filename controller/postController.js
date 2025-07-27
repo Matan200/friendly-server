@@ -187,7 +187,8 @@ const getLikeOnPost = async (req, res) => {
 const getFilteredPosts = async (req, res) => {
   console.log("FILTER FUNCTION REACHED");
   try {
-    const { city, school, minAge, maxAge, /*subject,*/ gender } = req.query;
+    const { city, school, minAge, maxAge, /*subject,*/ gender, usertype } =
+      req.query;
     // console.log("User type received:in try", userType);
     let posts = await Post.find({}).populate("editor").sort({ createdAt: -1 });
     console.log("User type received:in try");
@@ -200,6 +201,14 @@ const getFilteredPosts = async (req, res) => {
     //       post.editor.userType.toLowerCase() === userType.toLowerCase()
     //   );
     // }
+
+    if (usertype && usertype.trim() !== "") {
+      posts = posts.filter(
+        (post) =>
+          post.editor?.userType &&
+          post.editor.userType.toLowerCase() === usertype.toLowerCase()
+      );
+    }
     if (city) {
       console.log("User type received:insidt city", city);
       posts = posts.filter(
