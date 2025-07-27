@@ -184,6 +184,7 @@ const getLikeOnPost = async (req, res) => {
 };
 
 const getFilteredPosts = async (req, res) => {
+    console.log("FILTER FUNCTION REACHED");
   try {
     const { city, school, minAge, maxAge, /*subject,*/ gender} =
       req.query;
