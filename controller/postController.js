@@ -189,6 +189,10 @@ const getFilteredPosts = async (req, res) => {
       req.query;
     // console.log("User type received:in try", userType);
     let posts = await Post.find({}).populate("editor").sort({ createdAt: -1 });
+    console.log("User type received:in try", userType);
+    if(!userType){
+       console.log("User type is not exist");
+    }
     // console.log("User type received:after popu", userType);
     // if (userType) {
     //       console.log("User type received: inside if", userType);
@@ -208,6 +212,7 @@ const getFilteredPosts = async (req, res) => {
     }
 
     if (school) {
+      console.log("User school received:in try", school);
       posts = posts.filter(
         (post) =>
           post.editor?.school &&
@@ -237,6 +242,7 @@ const getFilteredPosts = async (req, res) => {
     //   );
     // }
     if (gender && gender.trim() !== "") {
+      console.log("User gender received:in try", gender);
       posts = posts.filter(
         (post) =>
           post.editor?.gender &&
