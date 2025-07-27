@@ -189,8 +189,9 @@ const getFilteredPosts = async (req, res) => {
       req.query;
 
     let posts = await Post.find({}).populate("editor").sort({ createdAt: -1 });
+    console.log("User type received:", userType);
+
     if (userType) {
-      res.status(200).json(userType);
       posts = posts.filter(
         (post) =>
           post.editor?.userType &&
