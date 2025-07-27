@@ -175,4 +175,35 @@ const getUserByEmail = async (req, res) => {
   }
 };
 
-module.exports = { checkEmailExists, createUser, loginCheck, getUserByEmail };
+const updateUserField = async (req, res) => {
+  const { email, ...updates } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ message: "Email is required" });
+  }
+
+  try {
+    const user = await User.findOneAndUpdate(
+      { email },
+      { $set: updates },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error("Error updating user:", error);
+    res.status(500).json({ message: "Server error while updating user" });
+  }
+};
+
+module.exports = {
+  checkEmailExists,
+  createUser,
+  loginCheck,
+  getUserByEmail,
+  updateUserField,
+};
