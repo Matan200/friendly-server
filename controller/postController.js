@@ -187,11 +187,11 @@ const getFilteredPosts = async (req, res) => {
   try {
     const { city, school, minAge, maxAge, /*subject,*/ gender, userType } =
       req.query;
-
+    console.log("User type received:in try", userType);
     let posts = await Post.find({}).populate("editor").sort({ createdAt: -1 });
-    console.log("User type received:", userType);
-
+    console.log("User type received:after popu", userType);
     if (userType) {
+          console.log("User type received: inside if", userType);
       posts = posts.filter(
         (post) =>
           post.editor?.userType &&
@@ -199,6 +199,7 @@ const getFilteredPosts = async (req, res) => {
       );
     }
     if (city) {
+          console.log("User type received:insidt city", city);
       posts = posts.filter(
         (post) =>
           post.editor?.address &&
