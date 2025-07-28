@@ -99,9 +99,15 @@ const createUser = async (req, res) => {
       if (emailExists) {
         return res
           .status(200)
-          .json({ existMail: true, message: "Email already exists" });
+          .json({ existMail: true, message: "אימייל כבר קיים במערכת" });
       }
-
+      const idExists = await User.findOne({ idnumber });
+      if (idExists) {
+        return res.status(200).json({
+          existId: true,
+          message: "תעודת זהות כבר קיימת במערכת",
+        });
+      }
       const age = new Date().getFullYear() - new Date(birthdate).getFullYear();
 
       // יצירת אובייקט משתמש חדש
