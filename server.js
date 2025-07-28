@@ -21,6 +21,13 @@ app.use(
 
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
+
+// לוג כל הבקשות
+app.use((req, res, next) => {
+  console.log(`=== ${req.method} ${req.url} ===`);
+  next();
+});
+
 app.use("/api", postRoutes); // כל הנתיבים של הפוסטים יהיו תחת /api
 app.use("/api/users", userRoutes);
 app.use("/api/events", eventsRoutes);

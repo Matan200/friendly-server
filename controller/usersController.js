@@ -252,19 +252,32 @@ const getUserByEmail = async (req, res) => {
 
 const updateUserField = async (req, res) => {
   try {
-    const { email, ...updates } = req.body;
+    console.log("=== UPDATE USER FIELD ===");
+    console.log("Request body:", req.body);
 
-    if (!email) {
-      return res.status(400).json({ message: "Email is required" });
+    const { email, currentEmail, ...updates } = req.body;
+
+    // אם יש currentEmail, זה אומר שרוצים לשנות מייל
+    const searchEmail = currentEmail || email;
+
+    // אם יש currentEmail, צריך להוסיף את המייל החדש לעדכונים
+    if (currentEmail && email) {
+      updates.email = email;
     }
 
-    // טיפול בתמונה אם נשלחה - בדיוק כמו ב-createUser
+    console.log("Search Email:", searchEmail);
+    console.log("Updates:", updates);
+
+    if (!searchEmail) {
+      console.log("No email provided!");
+      return res.status(400).json({ message: "Email is required" });
+    } // טיפול בתמונה אם נשלחה - בדיוק כמו ב-createUser
     if (req.body.picture && req.body.picture.startsWith("data:image/")) {
       try {
         const result = await cloudinary.uploader.upload(req.body.picture, {
           resource_type: "image",
           folder: "user_pictures",
-          public_id: `user_${email}_${Date.now()}`,
+          public_id: `user_${searchEmail}_${Date.now()}`,
           transformation: [
             { width: 500, height: 500, crop: "limit" },
             { quality: "auto" },
@@ -285,18 +298,25 @@ const updateUserField = async (req, res) => {
       }
     }
 
+    console.log("Looking for user with email:", searchEmail);
+
+    // חיפוש עם case-insensitive
     const user = await User.findOneAndUpdate(
-      { email },
+      { email: { $regex: new RegExp(`^${searchEmail}$`, "i") } },
       { $set: updates },
       { new: true }
     );
 
+    console.log("User found:", user ? "Yes" : "No");
     if (!user) {
+      console.log("User not found in database!");
       return res.status(404).json({ message: "User not found" });
     }
 
+    console.log("User updated successfully:", user.email);
     res.status(200).json(user);
   } catch (error) {
+    console.error("=== ERROR IN UPDATE USER FIELD ===");
     console.error("Error updating user:", error);
     res.status(500).json({ message: "Server error while updating user" });
   }
