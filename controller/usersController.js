@@ -177,6 +177,11 @@ const createUser = async (req, res) => {
           });
         }
       }
+      // אם זה אווטאר מוכן (נתיב מקומי)
+      else if (req.body.picture && req.body.picture.startsWith("/images/")) {
+        pictureUrl = req.body.picture; // שמירה של הנתיב המקומי
+        console.log("Using local avatar:", pictureUrl);
+      }
 
       // יצירת אובייקט משתמש חדש
       const newUser = new User({
