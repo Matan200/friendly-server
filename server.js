@@ -1,3 +1,5 @@
+require("dotenv").config(); // זה חייב להיות בראש הקובץ
+
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -10,14 +12,15 @@ const app = express();
 app.use(
   cors({
     // origin: "http://localhost:3000", // אפשר גם '*' אם אתה רוצה לאפשר לכל כתובת לגשת
-origin: process.env.CLIENT_URL || "*",
+    origin: process.env.CLIENT_URL || "*",
 
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
-app.use(express.json()); // מבטיח שהשרת יכול לקבל JSON
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use("/api", postRoutes); // כל הנתיבים של הפוסטים יהיו תחת /api
 app.use("/api/users", userRoutes);
 app.use("/api/events", eventsRoutes);
@@ -30,12 +33,10 @@ app.use("/api/events", eventsRoutes);
 //   .then(() => console.log("Connected to MongoDB Atlas")) // עדכון ההודעה
 //   .catch((err) => console.error("Error connecting to MongoDB:", err));
 
-
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
-
 
 const port = process.env.PORT || 4000;
 app.listen(port, () => {
